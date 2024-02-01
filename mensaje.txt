@@ -1,0 +1,1 @@
+Se exporto y verifico el modelo entidad relacion de la DB 
