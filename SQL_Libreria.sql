@@ -24,3 +24,21 @@ INSERT INTO tbl_cat_idioma VALUES(NULL, "Italiano", 1);
 INSERT INTO tbl_cat_idioma VALUES(NULL, "Japones", 1);
 
 SELECT * FROM tbl_cat_idioma;
+
+CALL AddLibro("La Perla", 230, 24, 3, 3, 1);
+
+SELECT * FROM tbl_ope_libro;
+
+SELECT 
+	li.LibroId,
+    li.Libro_Nombre,
+    ed.Editorial_Editorial,
+    ge.Genero_Genero,
+    li.Libro_Cantidad,
+    li.Libro_Costo
+FROM tbl_ope_libro li
+INNER JOIN tbl_cat_editorial ed on  li.Libro_Editorialid = ed.Editorialid
+INNER JOIN tbl_cat_genero ge on li.Libro_GeneroId = ge.GeneroId
+WHERE li.Libro_Activo = 1;
+
+CALL ConsultarLibro();
