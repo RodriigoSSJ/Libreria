@@ -6,32 +6,63 @@ package libreria;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *
  * @author Rodriigo SSJ
  */
 public class Conexion {
-     private static final String URL = "jdbc:mysql://localhost:3306/Libreria";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private static Connection con;
+    private  static final String driver = "com.mysql.jdbc.Driver";
+    private static final String user = "root";
+    private static final String pass ="";
+    private static final String url = "jdbc:mysql://localhost/libreria";
     public static void conectar() throws ClassNotFoundException {
-        Connection conexion = null;
+         con=null;
+        try{
+            Class.forName(driver);
+            con=(Connection) DriverManager.getConnection(url,user,pass);
+            if(con!=null){
+                System.out.print("Conexion exitosa");
+            }
+        }
+        catch(ClassNotFoundException | SQLException e){
+            System.out.print("Error"+e);
+            
+        }
+}
+     public static void consultarBaseDatos() throws SQLException, ClassNotFoundException {
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conexion = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos.");
+            conectar(); // Conectar a la base de datos si aún no está conectado
+            stmt = con.createStatement();
+            String query = "Call ConsultarLibro()"; // Reemplaza "nombre_de_tabla" con el nombre de la tabla que deseas consultar
+            rs = stmt.executeQuery(query);
+            // Iterar sobre los resultados y mostrarlos
+            while (rs.next()) {
+                // Suponiendo que la tabla tiene columnas "columna1" y "columna2"
+                String columna1 = rs.getString("LibroId");
+                String columna2 = rs.getString("Libro_Nombre");
+                System.out.println("Columna1: " + columna1 + ", Columna2: " + columna2);
+            }
         } catch (SQLException e) {
-            System.out.println("Error al conectar con la base de datos: " + e.getMessage());
+            System.out.println("Error al ejecutar la consulta: " + e);
         } finally {
-            if (conexion != null) {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    System.out.println("Error al cerrar la conexión: " + e.getMessage());
-                }
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
             }
         }
     }
 }
+
+
